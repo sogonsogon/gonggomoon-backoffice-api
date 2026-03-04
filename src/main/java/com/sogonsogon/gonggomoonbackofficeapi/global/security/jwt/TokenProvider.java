@@ -1,0 +1,106 @@
+package com.sogonsogon.gonggomoonbackofficeapi.global.security.jwt;
+
+import com.sogonsogon.gonggomoonbackofficeapi.domain.user.dto.response.TokenResponse;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SecurityException;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
+
+import javax.crypto.SecretKey;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.stream.Collectors;
+
+@Component
+public class TokenProvider {
+
+    private static final String AUTHORITIES_KEY = "auth";
+    private static final String BEARER_TYPE = "Bearer";
+
+    private final long accessTokenValidity;
+    private final long refreshTokenValidity;
+    private SecretKey key;
+
+
+    public TokenProvider(
+            @Value("${jwt.secret}") String secret,
+            @Value("${jwt.access-token-validity}") long accessTokenValidity,
+            @Value("${jwt.refresh-token-validity}") long refreshTokenValidity) {
+        this.key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
+        this.accessTokenValidity = accessTokenValidity * 1000;
+        this.refreshTokenValidity = refreshTokenValidity * 1000;
+    }
+
+    public TokenResponse generateTokenDto(Authentication authentication) {
+        String authorities = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.joining(","));
+
+        long now = (new Date()).getTime();
+
+        String accessToken = Jwts.builder()
+                .subject(authentication.getName())
+                .claim(AUTHORITIES_KEY, authorities)
+                .expiration(new Date(now + accessTokenValidity))
+                .signWith(key, Jwts.SIG.HS256)
+                .compact();
+
+        String refreshToken = Jwts.builder()
+                .expiration(new Date(now + refreshTokenValidity))
+                .signWith(key, Jwts.SIG.HS256)
+                .compact();
+
+        return TokenResponse.builder()
+                .grantType(BEARER_TYPE)
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .accessTokenExpiresIn(now + accessTokenValidity)
+                .build();
+    }
+
+    public Authentication getAuthentication(String accessToken) {
+
+        Claims claims = parseClaims(accessToken);
+
+        //TODO: 예외 처리 세분화
+        if (claims.get(AUTHORITIES_KEY) == null) throw new RuntimeException("권한 정보가 없는 토큰입니다.");
+
+        Collection<? extends GrantedAuthority> authorities =
+                Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
+                        .map(SimpleGrantedAuthority::new)
+                        .toList();
+
+        UserDetails principal = new User(claims.getSubject(), "", authorities);
+
+        return new UsernamePasswordAuthenticationToken(principal, "", authorities);
+    }
+
+    public boolean validateToken(String token) {
+
+        try {
+            Jwts.parser().verifyWith(key).build().parseSignedClaims(token);
+            return true;
+        } catch (SecurityException | MalformedJwtException e) {throw new RuntimeException();}
+    }
+
+    private Claims parseClaims(String accessToken) {
+        try {
+            return Jwts.parser().verifyWith(key).build().parseSignedClaims(accessToken).getPayload();
+        } catch (ExpiredJwtException e) {
+            return e.getClaims();
+        }
+    }
+
+}
