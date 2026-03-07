@@ -37,9 +37,9 @@ public class IndustryCategoryService {
      * 동일한 이름 수정 제약 필요?
      */
     @Transactional
-    public void updateIndustryCategory(UpdateIndustryCategoryRequest request, Long userId) {
+    public void updateIndustryCategory(UpdateIndustryCategoryRequest request,Long id, Long userId) {
 
-        IndustryCategory industryCategory = industryCategoryRepository.findById(request.industryCategoryId())
+        IndustryCategory industryCategory = industryCategoryRepository.findById(id)
                 .orElseThrow(IllegalArgumentException::new);
 
         industryCategory.update(request.industryCategoryName(), userId);

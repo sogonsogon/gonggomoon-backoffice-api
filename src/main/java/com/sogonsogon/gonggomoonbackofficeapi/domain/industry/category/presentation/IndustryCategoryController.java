@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,11 +40,12 @@ public class IndustryCategoryController {
         return ResponseEntity.ok().build();
     }
 
-    @PatchMapping
+    @PatchMapping("/{id}")
     public ResponseEntity<Void> updateIndustryCategory(@AuthenticationPrincipal CustomUserDetails userDetails,
-                                                       @RequestBody @Valid UpdateIndustryCategoryRequest request) {
+                                                       @RequestBody @Valid UpdateIndustryCategoryRequest request,
+                                                       @PathVariable Long id) {
 
-        industryCategoryService.updateIndustryCategory(request, Long.valueOf(userDetails.getUsername()));
+        industryCategoryService.updateIndustryCategory(request, id, Long.valueOf(userDetails.getUsername()));
 
         return ResponseEntity.ok().build();
     }
