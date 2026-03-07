@@ -3,16 +3,21 @@ package com.sogonsogon.gonggomoonbackofficeapi.domain.industry.category.presenta
 import com.sogonsogon.gonggomoonbackofficeapi.domain.industry.category.application.IndustryCategoryService;
 import com.sogonsogon.gonggomoonbackofficeapi.domain.industry.category.dto.request.CreateIndustryCategoryRequest;
 import com.sogonsogon.gonggomoonbackofficeapi.domain.industry.category.dto.request.UpdateIndustryCategoryRequest;
+import com.sogonsogon.gonggomoonbackofficeapi.domain.industry.category.dto.response.IndustryCategoryResponse;
 import com.sogonsogon.gonggomoonbackofficeapi.global.security.principal.CustomUserDetails;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/admin/industries")
@@ -41,5 +46,12 @@ public class IndustryCategoryController {
         industryCategoryService.updateIndustryCategory(request, Long.valueOf(userDetails.getUsername()));
 
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping
+    public ResponseEntity<Map<String, List<IndustryCategoryResponse>>> getIndustryCategories() {
+
+        return ResponseEntity.ok(industryCategoryService.getIndustryCategorise());
+
     }
 }
