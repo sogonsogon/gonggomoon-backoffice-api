@@ -42,7 +42,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/admin/auth/login").permitAll()
 //                        .requestMatchers("/api/v1/admin/industries").permitAll()
 
-                        .anyRequest().permitAll()
+                        .anyRequest().authenticated()
                 )
 
 //                .exceptionHandling(ex -> ex
