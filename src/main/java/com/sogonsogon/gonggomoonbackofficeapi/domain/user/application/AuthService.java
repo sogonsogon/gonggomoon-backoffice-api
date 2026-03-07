@@ -34,10 +34,7 @@ public class AuthService {
 
         TokenResponse tokenResponse = tokenProvider.generateTokenDto(authentication);
 
-        RefreshToken refreshToken = RefreshToken.builder()
-                .userId(Long.valueOf(authentication.getName()))
-                .token(tokenResponse.refreshToken())
-                .build();
+        RefreshToken refreshToken = RefreshToken.create(Long.valueOf(authentication.getName()),tokenResponse.refreshToken());
 
         refreshTokenRepository.save(refreshToken);
 

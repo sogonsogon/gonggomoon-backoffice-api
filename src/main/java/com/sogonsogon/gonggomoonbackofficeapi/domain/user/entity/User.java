@@ -9,7 +9,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
+import lombok.Builder;
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -19,6 +19,7 @@ import java.time.Instant;
 
 @Entity
 @Table(name = "users")
+@EntityListeners(AuditingEntityListener.class)
 @Getter
 public class User {
 
@@ -56,7 +57,9 @@ public class User {
 
     protected User() {}
 
-    private User(String email, String password, String name, UserRole userRole, UserStatus userStatus) {
+    @Builder
+    private User(Long id, String email, String password, String name, UserRole userRole, UserStatus userStatus) {
+        this.id = id;
         this.email = email;
         this.password = password;
         this.name = name;
@@ -64,8 +67,14 @@ public class User {
         this.userStatus = userStatus;
     }
 
-    public static User create(String email, String password, String name, UserRole userRole, UserStatus userStatus) {
-        return new User(email, password, name, userRole, userStatus);
+    /**
+     * 가짜 유저 객체를 만들기 위한 생성자
+     * 현재 회원가입은 없음
+     */
+    public static User createAuthorityUser(Long id, UserRole role) {
+        return User.builder()
+                .id(id)
+                .userRole(role)
+                .build();
     }
-
 }

@@ -1,6 +1,7 @@
 package com.sogonsogon.gonggomoonbackofficeapi.global.security.jwt;
 
 import com.sogonsogon.gonggomoonbackofficeapi.domain.user.dto.response.TokenResponse;
+import com.sogonsogon.gonggomoonbackofficeapi.global.security.principal.CustomUserDetails;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -13,7 +14,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -31,7 +31,7 @@ public class TokenProvider {
 
     private final long accessTokenValidity;
     private final long refreshTokenValidity;
-    private SecretKey key;
+    private final SecretKey key;
 
 
     public TokenProvider(
@@ -82,7 +82,11 @@ public class TokenProvider {
                         .map(SimpleGrantedAuthority::new)
                         .toList();
 
-        UserDetails principal = new User(claims.getSubject(), "", authorities);
+        UserDetails principal = CustomUserDetails.ofToken(
+                Long.valueOf(claims.getSubject()),
+                authorities
+        );
+
 
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
     }
