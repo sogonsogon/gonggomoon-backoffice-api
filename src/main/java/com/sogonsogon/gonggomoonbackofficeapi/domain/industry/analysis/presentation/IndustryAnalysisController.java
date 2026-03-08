@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -63,5 +64,21 @@ public class IndustryAnalysisController {
     public ResponseEntity<ReportResponse> getReport(@PathVariable Long id) {
 
         return ResponseEntity.ok(industryAnalysisService.getReport(id));
+    }
+
+    @PatchMapping("/industries/reports/{id}/publish")
+    public ResponseEntity<Void> publishReport(@PathVariable Long id) {
+
+        industryAnalysisService.publishReport(id);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/industries/reports/{id}")
+    public ResponseEntity<Void> deleteReport(@PathVariable Long id) {
+
+        industryAnalysisService.deleteReport(id);
+
+        return ResponseEntity.ok().build();
     }
 }

@@ -130,4 +130,11 @@ public class IndustryAnalysis {
         Optional.ofNullable(hiring).ifPresent(v -> this.hiring = v);
         Optional.ofNullable(investment).ifPresent(v -> this.investment = v);
     }
+
+    /**
+     * 현재 상태 값 확인
+     */
+    public void publish() {
+        this.status = IndustryAnalysisStatus.PUBLISHED;
+    }
 }
