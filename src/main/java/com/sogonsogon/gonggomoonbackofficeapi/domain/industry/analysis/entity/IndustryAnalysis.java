@@ -17,9 +17,9 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.sql.SQLType;
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 
 @Entity
 @Getter
@@ -112,5 +112,22 @@ public class IndustryAnalysis {
                 .hiring(hiring)
                 .investment(investment)
                 .build();
+    }
+
+    //TODO: 만약 유저가 내용을 전부 삭제한 필드는 [] 빈값이 들어와야 함 FE에게 공유 필요함
+    public void update(Long industryCategoryId, Integer analysis_year, Long userId,
+                       String competition, String marketSize, List<String> trend, List<String> regulation,
+                       List<String> keyword, List<String> hiring, List<String> investment) {
+
+        Optional.ofNullable(industryCategoryId).ifPresent(v -> this.industryCategoryId = v);
+        Optional.ofNullable(analysis_year).ifPresent(v -> this.analysis_year = v);
+        Optional.ofNullable(userId).ifPresent(v -> this.updatedBy = v);
+        Optional.ofNullable(competition).ifPresent(v -> this.competition = v);
+        Optional.ofNullable(marketSize).ifPresent(v -> this.marketSize = v);
+        Optional.ofNullable(trend).ifPresent(v -> this.trend = v);
+        Optional.ofNullable(regulation).ifPresent(v -> this.regulation = v);
+        Optional.ofNullable(keyword).ifPresent(v -> this.keyword = v);
+        Optional.ofNullable(hiring).ifPresent(v -> this.hiring = v);
+        Optional.ofNullable(investment).ifPresent(v -> this.investment = v);
     }
 }
