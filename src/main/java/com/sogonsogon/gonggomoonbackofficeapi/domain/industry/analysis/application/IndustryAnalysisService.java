@@ -80,4 +80,31 @@ public class IndustryAnalysisService {
                 analysis.getTrend(), analysis.getRegulation(), analysis.getCompetition(), analysis.getHiring(), analysis.getInvestment());
     }
 
+    /**
+     * 분석 발행
+     * 누가 퍼블리시 한지 남겨야 하나?
+     */
+    @Transactional
+    public void publishReport(Long id) {
+
+        IndustryAnalysis analysis = industryAnalysisRepository.findById(id).orElseThrow(IllegalArgumentException::new);
+
+        industryAnalysisRepository.resetOtherToPending(analysis.getIndustryCategoryId(), id);
+
+        analysis.publish();
+    }
+
+    /**
+     * 분석 삭제
+     * 아.. 누가 삭제한지 남겨야 할까?
+     * soft delete? 기업이 다 들고 있을텐데..
+     */
+    @Transactional
+    public void deleteReport(Long id) {
+
+        if (!industryAnalysisRepository.existsById(id)) throw new IllegalArgumentException();
+
+        industryAnalysisRepository.deleteById(id);
+    }
+
 }
