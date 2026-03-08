@@ -2,10 +2,12 @@ package com.sogonsogon.gonggomoonbackofficeapi.domain.industry.analysis.presenta
 
 import com.sogonsogon.gonggomoonbackofficeapi.domain.industry.analysis.application.IndustryAnalysisService;
 import com.sogonsogon.gonggomoonbackofficeapi.domain.industry.analysis.dto.request.CreateReportRequest;
+import com.sogonsogon.gonggomoonbackofficeapi.domain.industry.analysis.dto.request.UpdateReportRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -31,6 +33,16 @@ public class IndustryAnalysisController {
                                              @AuthenticationPrincipal UserDetails details) {
 
         industryAnalysisService.createReport(request, industryId, Long.valueOf(details.getUsername()));
+
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/industries/reports/{reportId}")
+    public ResponseEntity<Void> updateReport(@PathVariable Long reportId,
+                                             @RequestBody @Valid UpdateReportRequest request,
+                                             @AuthenticationPrincipal UserDetails details) {
+
+        industryAnalysisService.updateReport(request, reportId, Long.valueOf(details.getUsername()));
 
         return ResponseEntity.ok().build();
     }
