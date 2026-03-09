@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -69,5 +70,13 @@ public class CompanyAnalysisController {
     public ResponseEntity<CompanyReportResponse> getCompanyReport(@PathVariable Long id) {
 
         return ResponseEntity.ok(companyAnalysisService.getCompanyReport(id));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteCompanyReport(@PathVariable Long id) {
+
+        companyAnalysisService.deleteCompanyReport(id);
+
+        return ResponseEntity.ok().build();
     }
 }
