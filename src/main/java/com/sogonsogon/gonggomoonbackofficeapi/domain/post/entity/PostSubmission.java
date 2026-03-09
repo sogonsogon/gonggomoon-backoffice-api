@@ -44,6 +44,9 @@ public class PostSubmission {
     @Column(name = "approved_by", updatable = false)
     private Long approvedBy;
 
+    @Column(name = "rejected_by")
+    private Long rejectedBy;
+
     @CreatedDate
     @Column(name = "created_at")
     private Instant createdAt;
@@ -54,4 +57,14 @@ public class PostSubmission {
 
     protected PostSubmission() {}
 
+    public void approveSummit(SubmissionStatus status, Long approvedBy) {
+        this.status = status;
+        this.approvedBy = approvedBy;
+    }
+
+    public void rejectSummit(SubmissionStatus status, String rejectionReason, Long rejectedBy) {
+        this.status = status;
+        this.rejectedBy = rejectedBy;
+        this.rejectionReason = rejectionReason;
+    }
 }

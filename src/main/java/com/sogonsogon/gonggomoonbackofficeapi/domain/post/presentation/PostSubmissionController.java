@@ -1,6 +1,8 @@
 package com.sogonsogon.gonggomoonbackofficeapi.domain.post.presentation;
 
 import com.sogonsogon.gonggomoonbackofficeapi.domain.post.application.PostSubmissionService;
+import com.sogonsogon.gonggomoonbackofficeapi.domain.post.dto.ApproveSummitRequest;
+import com.sogonsogon.gonggomoonbackofficeapi.domain.post.dto.RejectSummitRequest;
 import com.sogonsogon.gonggomoonbackofficeapi.domain.post.dto.SubmitPostRequest;
 import com.sogonsogon.gonggomoonbackofficeapi.domain.post.dto.SubmitPostResponse;
 import com.sogonsogon.gonggomoonbackofficeapi.domain.post.entity.PostSubmission;
@@ -12,7 +14,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -46,7 +50,25 @@ public class PostSubmissionController {
         Page<PostSubmission> submissions = submissionService.getSubmissions(status, pageable);
 
         return ResponseEntity.ok(submissions.map(SubmitPostResponse::from));
+    }
 
+    @PutMapping("/{id}/approve")
+    public ResponseEntity<Void> approveSubmission(@PathVariable Long id,
+                                                  @RequestBody @Valid ApproveSummitRequest request,
+                                                  @AuthenticationPrincipal UserDetails details) {
 
+        submissionService.approveSubmission(id, request, Long.valueOf(details.getUsername()));
+
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/{id}/rejcet")
+    public ResponseEntity<Void> rejectSubmission(@PathVariable Long id,
+                                                  @RequestBody @Valid RejectSummitRequest request,
+                                                  @AuthenticationPrincipal UserDetails details) {
+
+        submissionService.rejectSubmission(id, request, Long.valueOf(details.getUsername()));
+
+        return ResponseEntity.ok().build();
     }
 }
