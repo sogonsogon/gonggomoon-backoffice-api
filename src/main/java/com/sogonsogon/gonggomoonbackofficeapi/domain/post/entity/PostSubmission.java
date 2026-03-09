@@ -3,11 +3,12 @@ package com.sogonsogon.gonggomoonbackofficeapi.domain.post.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.Builder;
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -31,10 +32,14 @@ public class PostSubmission {
     @Column(name = "request_url")
     private String requestUrl;
 
+    @Enumerated(EnumType.STRING)
     private SubmissionStatus status;
 
     @Column(name = "rejection_reason")
     private String rejectionReason;
+
+    @Enumerated(EnumType.STRING)
+    private SubmissionPlatform platform;
 
     @Column(name = "approved_by", updatable = false)
     private Long approvedBy;
@@ -48,21 +53,5 @@ public class PostSubmission {
     private Instant updated_at;
 
     protected PostSubmission() {}
-
-    @Builder
-    private PostSubmission(Long requestedBy, String requestUrl, Long approvedBy) {
-        this.requestedBy = requestedBy;
-        this.requestUrl = requestUrl;
-        this.approvedBy = approvedBy;
-    }
-
-    public static PostSubmission create(Long requestedBy, String requestUrl, Long approvedBy) {
-        return PostSubmission.builder()
-                .requestedBy(requestedBy)
-                .requestUrl(requestUrl)
-                .approvedBy(approvedBy)
-                .build();
-    }
-
 
 }
