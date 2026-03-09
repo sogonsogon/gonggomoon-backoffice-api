@@ -2,13 +2,20 @@ package com.sogonsogon.gonggomoonbackofficeapi.domain.post.presentation;
 
 import com.sogonsogon.gonggomoonbackofficeapi.domain.post.application.PostSubmissionService;
 import com.sogonsogon.gonggomoonbackofficeapi.domain.post.dto.SubmitPostRequest;
+import com.sogonsogon.gonggomoonbackofficeapi.domain.post.dto.SubmitPostResponse;
+import com.sogonsogon.gonggomoonbackofficeapi.domain.post.entity.PostSubmission;
+import com.sogonsogon.gonggomoonbackofficeapi.domain.post.entity.SubmissionStatus;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -28,5 +35,18 @@ public class PostSubmissionController {
         submissionService.submitPost(request, Long.valueOf(details.getUsername()));
 
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<SubmitPostResponse>> getSubmissions(
+            @RequestParam(required = false) SubmissionStatus status,
+            Pageable pageable
+            ) {
+
+        Page<PostSubmission> submissions = submissionService.getSubmissions(status, pageable);
+
+        return ResponseEntity.ok(submissions.map(SubmitPostResponse::from));
+
+
     }
 }
