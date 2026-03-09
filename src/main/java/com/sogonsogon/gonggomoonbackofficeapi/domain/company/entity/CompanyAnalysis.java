@@ -16,6 +16,8 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.Instant;
+import java.util.List;
+import java.util.Optional;
 
 @Entity
 @Getter
@@ -100,5 +102,21 @@ public class CompanyAnalysis {
                 .description(description)
                 .createdBy(createdBy)
                 .build();
+    }
+
+    public void update(Long industryCategoryId, String companyName, CompanyType companyType, Integer employeeCount,
+                       String address, Long revenue, Integer foundedYear, String websiteUrl,
+                       String description, Long createdBy) {
+
+        Optional.ofNullable(industryCategoryId).ifPresent(v -> this.industryCategoryId = v);
+        Optional.ofNullable(companyName).ifPresent(v -> this.companyName = v);
+        if (companyType != null) this.companyType = companyType;
+        Optional.ofNullable(employeeCount).ifPresent(v -> this.employeeCount = v);
+        Optional.ofNullable(address).ifPresent(v -> this.address = v);
+        Optional.ofNullable(revenue).ifPresent(v -> this.revenue = v);
+        Optional.ofNullable(foundedYear).ifPresent(v -> this.foundedYear = v);
+        Optional.ofNullable(websiteUrl).ifPresent(v -> this.websiteUrl = v);
+        Optional.ofNullable(description).ifPresent(v -> this.description = v);
+        Optional.ofNullable(createdBy).ifPresent(v -> this.createdBy = v);
     }
 }
