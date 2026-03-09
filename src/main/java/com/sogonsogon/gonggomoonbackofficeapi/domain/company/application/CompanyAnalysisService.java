@@ -65,4 +65,14 @@ public class CompanyAnalysisService {
                 analysis.getEmployeeCount(), analysis.getDescription(), analysis.getAddress(), analysis.getRevenue(), analysis.getFoundedYear(),
                 analysis.getWebsiteUrl(), analysis.getCreatedBy(), analysis.getUpdatedBy(), analysis.getCreatedAt(), analysis.getUpdatedAt());
     }
+
+    /**
+     * softDelete 고민 중..
+     */
+    public void deleteCompanyReport(Long id) {
+
+        if (!companyAnalysisRepository.existsById(id)) throw new IllegalArgumentException();
+
+        companyAnalysisRepository.deleteById(id);
+    }
 }
