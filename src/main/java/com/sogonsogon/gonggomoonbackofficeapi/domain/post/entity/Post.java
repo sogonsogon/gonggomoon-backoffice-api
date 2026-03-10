@@ -3,6 +3,8 @@ package com.sogonsogon.gonggomoonbackofficeapi.domain.post.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -29,17 +31,28 @@ public class Post {
     @Column(name = "company_id")
     private Long companyId;
 
+    @Column(name = "title")
     private String title;
 
     @Column(name = "experience_level")
     private Integer experienceLevel;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "post_status")
     private PostStatus status;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "job_type")
     private JobType jobType;
 
+    @Column(columnDefinition = "TEXT")
+    private String content;
+
+    // 생성자에 추가 되어야 함
+    @Column(name = "post_url")
+    private String url;
+
+    @Column(name = "deadline")
     private Instant deadline;
 
     @Column(name = "analyzed_at")
