@@ -28,6 +28,9 @@ public class IndustryCategory {
     @Column(name = "category_name", nullable = false)
     private String categoryName;
 
+    @Column(name = "published_report_id")
+    private Long publishedReportId;
+
     @Column(name = "created_by", nullable = false, updatable = false)
     private Long createdBy;
 
@@ -68,5 +71,9 @@ public class IndustryCategory {
 
         this.categoryName = categoryName;
         this.updatedBy = id;
+    }
+
+    public void updatePublishedReport(Long id) {
+        this.publishedReportId = id;
     }
 }

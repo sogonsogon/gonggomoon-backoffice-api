@@ -3,6 +3,7 @@ package com.sogonsogon.gonggomoonbackofficeapi.domain.post.application;
 import com.sogonsogon.gonggomoonbackofficeapi.domain.post.dto.PostResponse;
 import com.sogonsogon.gonggomoonbackofficeapi.domain.post.dto.PostsResponse;
 import com.sogonsogon.gonggomoonbackofficeapi.domain.post.entity.JobType;
+import com.sogonsogon.gonggomoonbackofficeapi.domain.post.entity.Post;
 import com.sogonsogon.gonggomoonbackofficeapi.domain.post.entity.PostStatus;
 import com.sogonsogon.gonggomoonbackofficeapi.domain.post.infrastructure.PostRepository;
 import org.springframework.data.domain.Page;
@@ -33,5 +34,19 @@ public class PostService {
 
         return postRepository.searchById(id, PostStatus.POSTED)
                 .orElseThrow(IllegalArgumentException::new);
+    }
+
+    public void publishPost(Long id) {
+
+        Post post =  postRepository.findById(id).orElseThrow(IllegalArgumentException::new);
+
+        post.publish();
+    }
+
+    public void deletePost(Long id) {
+
+        Post post = postRepository.findById(id).orElseThrow(IllegalArgumentException::new);
+
+        postRepository.delete(post);
     }
 }

@@ -45,11 +45,25 @@ public class PostSubmissionService {
     @Transactional
     public void approveSubmission(Long id, ApproveSummitRequest request, Long approvedBy) {
 
-        PostSubmission submission = postSubmissionRepository.findById(id).orElseThrow(IllegalArgumentException::new);
+        Post newPost;
 
-        submission.approveSummit(SubmissionStatus.APPROVED, approvedBy);
+        if (id != null) {
+            PostSubmission submission = postSubmissionRepository.findById(id).orElseThrow(IllegalArgumentException::new);
 
-        Post newPost = Post.create(submission.getId(), request.companyId(), request.title(), request.experienceLevel(), request.jobType(), request.deadline());
+            submission.approveSummit(SubmissionStatus.APPROVED, approvedBy);
+
+            newPost = Post.create(submission.getId(), request.companyId(), request.title(), request.experienceLevel(), request.jobType(), request.deadline());
+        } else {
+
+            newPost = Post.create(
+                    null,
+                    request.companyId(),
+                    request.title(),
+                    request.experienceLevel(),
+                    request.jobType(),
+                    request.deadline()
+            );
+        }
 
         postRepository.save(newPost);
     }
