@@ -6,6 +6,8 @@ import com.sogonsogon.gonggomoonbackofficeapi.domain.industry.analysis.dto.respo
 import com.sogonsogon.gonggomoonbackofficeapi.domain.industry.analysis.dto.response.ReportsResponse;
 import com.sogonsogon.gonggomoonbackofficeapi.domain.industry.analysis.entity.IndustryAnalysis;
 import com.sogonsogon.gonggomoonbackofficeapi.domain.industry.analysis.infrastructure.IndustryAnalysisRepository;
+import com.sogonsogon.gonggomoonbackofficeapi.domain.industry.category.entity.IndustryCategory;
+import com.sogonsogon.gonggomoonbackofficeapi.domain.industry.category.infrastructure.IndustryCategoryRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,9 +18,11 @@ import java.util.Map;
 public class IndustryAnalysisService {
 
     private final IndustryAnalysisRepository industryAnalysisRepository;
+    private final IndustryCategoryRepository industryCategoryRepository;
 
-    public IndustryAnalysisService(IndustryAnalysisRepository industryAnalysisRepository) {
+    public IndustryAnalysisService(IndustryAnalysisRepository industryAnalysisRepository, IndustryCategoryRepository industryCategoryRepository) {
         this.industryAnalysisRepository = industryAnalysisRepository;
+        this.industryCategoryRepository = industryCategoryRepository;
     }
 
     /**
@@ -92,6 +96,10 @@ public class IndustryAnalysisService {
         industryAnalysisRepository.resetOtherToPending(analysis.getIndustryCategoryId(), id);
 
         analysis.publish();
+
+        IndustryCategory category = industryCategoryRepository.findById(analysis.getIndustryCategoryId()).orElseThrow(IllegalArgumentException::new);
+
+        category.updatePublishedReport(id);
     }
 
     /**
@@ -102,9 +110,9 @@ public class IndustryAnalysisService {
     @Transactional
     public void deleteReport(Long id) {
 
-        if (!industryAnalysisRepository.existsById(id)) throw new IllegalArgumentException();
+        IndustryAnalysis analysis = industryAnalysisRepository.findById(id).orElseThrow(IllegalArgumentException::new);
 
-        industryAnalysisRepository.deleteById(id);
+        industryAnalysisRepository.delete(analysis);
     }
 
 }

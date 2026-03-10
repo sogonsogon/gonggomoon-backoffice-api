@@ -94,4 +94,9 @@ public class Post {
                 .build();
     }
 
+    public void publish() {
+        if (this.status == PostStatus.POSTED) throw new IllegalArgumentException();
+        this.status = PostStatus.POSTED;
+    }
+
 }
