@@ -6,6 +6,7 @@ import com.sogonsogon.gonggomoonbackofficeapi.domain.post.dto.RejectSummitReques
 import com.sogonsogon.gonggomoonbackofficeapi.domain.post.dto.SubmitPostRequest;
 import com.sogonsogon.gonggomoonbackofficeapi.domain.post.dto.SubmitPostResponse;
 import com.sogonsogon.gonggomoonbackofficeapi.domain.post.entity.PostSubmission;
+import com.sogonsogon.gonggomoonbackofficeapi.domain.post.entity.SubmissionPlatform;
 import com.sogonsogon.gonggomoonbackofficeapi.domain.post.entity.SubmissionStatus;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -44,10 +45,11 @@ public class PostSubmissionController {
     @GetMapping
     public ResponseEntity<Page<SubmitPostResponse>> getSubmissions(
             @RequestParam(required = false) SubmissionStatus status,
+            @RequestParam(required = false) SubmissionPlatform platform,
             Pageable pageable
             ) {
 
-        Page<PostSubmission> submissions = submissionService.getSubmissions(status, pageable);
+        Page<PostSubmission> submissions = submissionService.getSubmissions(status, platform, pageable);
 
         return ResponseEntity.ok(submissions.map(SubmitPostResponse::from));
     }

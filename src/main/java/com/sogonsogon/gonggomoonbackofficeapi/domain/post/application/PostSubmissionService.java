@@ -5,6 +5,7 @@ import com.sogonsogon.gonggomoonbackofficeapi.domain.post.dto.RejectSummitReques
 import com.sogonsogon.gonggomoonbackofficeapi.domain.post.dto.SubmitPostRequest;
 import com.sogonsogon.gonggomoonbackofficeapi.domain.post.entity.Post;
 import com.sogonsogon.gonggomoonbackofficeapi.domain.post.entity.PostSubmission;
+import com.sogonsogon.gonggomoonbackofficeapi.domain.post.entity.SubmissionPlatform;
 import com.sogonsogon.gonggomoonbackofficeapi.domain.post.entity.SubmissionStatus;
 import com.sogonsogon.gonggomoonbackofficeapi.domain.post.infrastructure.PostRepository;
 import com.sogonsogon.gonggomoonbackofficeapi.domain.post.infrastructure.PostSubmissionRepository;
@@ -28,11 +29,14 @@ public class PostSubmissionService {
 
     }
 
+    // 플랫폼 DB로 관리해야 할듯?
     @Transactional(readOnly = true)
-    public Page<PostSubmission> getSubmissions(SubmissionStatus status, Pageable pageable) {
+    public Page<PostSubmission> getSubmissions(SubmissionStatus status, SubmissionPlatform platform, Pageable pageable) {
 
         if (status != null) {
             return postSubmissionRepository.findByStatus(status, pageable);
+        } else if (platform != null) {
+            return postSubmissionRepository.findByPlatform(platform, pageable);
         }
 
         return postSubmissionRepository.findAll(pageable);
