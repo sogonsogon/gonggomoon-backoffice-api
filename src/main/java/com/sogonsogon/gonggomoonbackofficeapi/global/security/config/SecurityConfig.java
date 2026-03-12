@@ -40,6 +40,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
 
                         .requestMatchers("/api/v1/admin/auth/login").permitAll()
+                        .requestMatchers("/actuator/health").permitAll() // 헬스체크는 모두 허용
 //                        .requestMatchers("/api/v1/admin/industries").permitAll()
 
                         .anyRequest().authenticated()
