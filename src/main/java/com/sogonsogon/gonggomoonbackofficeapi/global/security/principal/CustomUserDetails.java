@@ -14,9 +14,15 @@ import java.util.Collections;
 public class CustomUserDetails implements UserDetails {
 
     private final User user;
+    private final String passwordHash;
 
-    public CustomUserDetails(User user) {
+    public CustomUserDetails(User user, String passwordHash) {
         this.user = user;
+        this.passwordHash = passwordHash;
+    }
+
+    public static CustomUserDetails of(User user, String passwordHash) {
+        return new CustomUserDetails(user, passwordHash);
     }
 
     public static CustomUserDetails ofToken(Long id, Collection<? extends GrantedAuthority> authorities) {
@@ -27,19 +33,20 @@ public class CustomUserDetails implements UserDetails {
         // 빌더가 생성자에 붙어 있으므로, 필요한 필드만 채워서 가짜 유저를 만듭니다.
         User tempUser = User.createAuthorityUser(id, role);
 
-        return new CustomUserDetails(tempUser);
+        // passwordHash는 토큰에서 검증할 수 없으므로 null로 설정합니다. 실제 인증 과정에서는 이 메서드를 사용하지 않고, DB에서 조회한 UserDetails를 사용해야 합니다.
+        return new CustomUserDetails(tempUser, null);
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singleton(
-                new SimpleGrantedAuthority(user.getUserRole().getAuthority())
+                new SimpleGrantedAuthority(user.getRole().getAuthority())
         );
     }
 
     @Override
     public String getPassword() {
-        return user.getPassword();
+        return passwordHash;
     }
 
     @Override
