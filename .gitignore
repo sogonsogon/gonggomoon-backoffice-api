@@ -42,4 +42,8 @@ out/
 .DS_Store
 
 ### Spring Boot sensitive config ###
-*.yml
+application.yml
+application-*.yml
+
+### Environment variables ###
+.env
