@@ -44,6 +44,8 @@ out/
 ### Spring Boot sensitive config ###
 application.yml
 application-*.yml
+!**/src/test/**/application.yml
+!**/src/test/**/application-*.yml
 
 ### Environment variables ###
 .env
