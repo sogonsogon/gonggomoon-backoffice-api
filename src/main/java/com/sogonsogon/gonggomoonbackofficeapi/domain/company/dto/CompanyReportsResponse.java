@@ -2,7 +2,6 @@ package com.sogonsogon.gonggomoonbackofficeapi.domain.company.dto;
 
 import com.sogonsogon.gonggomoonbackofficeapi.domain.company.entity.CompanyAnalysis;
 import com.sogonsogon.gonggomoonbackofficeapi.domain.company.entity.CompanyType;
-import com.sogonsogon.gonggomoonbackofficeapi.domain.industry.category.entity.IndustryType;
 
 public record CompanyReportsResponse(
         Long companyId,
