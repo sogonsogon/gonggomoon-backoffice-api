@@ -1,4 +1,4 @@
-package com.sogonsogon.gonggomoonbackofficeapi.domain.industry.category.entity;
+package com.sogonsogon.gonggomoonbackofficeapi.domain.industry.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -9,6 +9,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.Getter;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -16,22 +18,21 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.time.Instant;
 
 @Entity
-@Table(name = "industry_categories")
+@Table(name = "industries")
 @Getter
 @EntityListeners(AuditingEntityListener.class)
-public class IndustryCategory {
+@SQLDelete(sql = "UPDATE industries SET is_deleted = true WHERE id = ?")
+@SQLRestriction("is_deleted = false")
+public class Industry {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "category_name", nullable = false)
-    private String categoryName;
+    @Column(name = "name", nullable = false)
+    private String name;
 
-    @Column(name = "published_report_id")
-    private Long publishedReportId;
-
-    @Column(name = "created_by", nullable = false, updatable = false)
+    @Column(name = "created_by")
     private Long createdBy;
 
     @Column(name = "updated_by")
@@ -45,35 +46,35 @@ public class IndustryCategory {
     @Column(name = "updated_at")
     private Instant updatedAt;
 
-    protected IndustryCategory() {}
+    @Column(name = "is_deleted")
+    private boolean isDeleted;
+
+    protected Industry () {}
 
     @Builder
-    private IndustryCategory(String categoryName, Long createdBy) {
-        this.categoryName = categoryName;
+    private Industry(String name, Long createdBy) {
+        this.name = name;
         this.createdBy = createdBy;
+        this.isDeleted = false;
     }
 
-    public static IndustryCategory create(String categoryName, Long createdBy) {
-        //TODO: private으로 뺄거임
-        if (categoryName == null || categoryName.isBlank()) throw new IllegalArgumentException();
+    public static Industry create(String name, Long createdBy) {
+
+        if (name == null || name.isBlank()) throw new IllegalArgumentException();
         if (createdBy == null || createdBy <= 0) throw new IllegalArgumentException();
 
-        return IndustryCategory.builder()
-                .categoryName(categoryName)
+        return Industry.builder()
+                .name(name)
                 .createdBy(createdBy)
                 .build();
     }
 
-    public void update(String categoryName, Long id) {
+    public void update(String name, Long updatedBy) {
 
-        if (categoryName == null || categoryName.isBlank()) throw new IllegalArgumentException();
+        if (name == null || name.isBlank()) throw new IllegalArgumentException();
         if (id == null || id <= 0) throw new IllegalArgumentException();
 
-        this.categoryName = categoryName;
-        this.updatedBy = id;
-    }
-
-    public void updatePublishedReport(Long id) {
-        this.publishedReportId = id;
+        this.name = name;
+        this.updatedBy = updatedBy;
     }
 }
