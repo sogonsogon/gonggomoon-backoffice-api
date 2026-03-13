@@ -7,9 +7,8 @@ import com.sogonsogon.gonggomoonbackofficeapi.domain.company.dto.UpdateCompanyRe
 import com.sogonsogon.gonggomoonbackofficeapi.domain.company.entity.CompanyAnalysis;
 import com.sogonsogon.gonggomoonbackofficeapi.domain.company.entity.CompanyType;
 import com.sogonsogon.gonggomoonbackofficeapi.domain.company.infrastructure.CompanyAnalysisRepository;
-import com.sogonsogon.gonggomoonbackofficeapi.domain.industry.category.entity.IndustryCategory;
-import com.sogonsogon.gonggomoonbackofficeapi.domain.industry.category.entity.IndustryType;
-import com.sogonsogon.gonggomoonbackofficeapi.domain.industry.category.infrastructure.IndustryCategoryRepository;
+import com.sogonsogon.gonggomoonbackofficeapi.domain.industry.entity.Industry;
+import com.sogonsogon.gonggomoonbackofficeapi.domain.industry.infrastructure.IndustryJpaRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -18,11 +17,11 @@ import org.springframework.stereotype.Service;
 public class CompanyAnalysisService {
 
     private final CompanyAnalysisRepository companyAnalysisRepository;
-    public final IndustryCategoryRepository industryCategoryRepository;
+    public final IndustryJpaRepository industryJpaRepository;
 
-    public CompanyAnalysisService(CompanyAnalysisRepository companyAnalysisRepository, IndustryCategoryRepository industryCategoryRepository) {
+    public CompanyAnalysisService(CompanyAnalysisRepository companyAnalysisRepository, IndustryJpaRepository industryJpaRepository) {
         this.companyAnalysisRepository = companyAnalysisRepository;
-        this.industryCategoryRepository = industryCategoryRepository;
+        this.industryJpaRepository = industryJpaRepository;
     }
 
     public void create(CreateCompanyReportRequest request, Long userId) {
@@ -59,9 +58,9 @@ public class CompanyAnalysisService {
 
         CompanyAnalysis analysis = companyAnalysisRepository.findById(id).orElseThrow(IllegalArgumentException::new);
 
-        IndustryCategory industryCategory =industryCategoryRepository.findById(analysis.getIndustryCategoryId()).orElseThrow(IllegalArgumentException::new);
+        Industry industry = industryJpaRepository.findById(analysis.getIndustryCategoryId()).orElseThrow(IllegalArgumentException::new);
 
-        return new CompanyReportResponse(analysis.getId(), analysis.getCompanyType(), IndustryType.valueOf(industryCategory.getCategoryName()),
+        return new CompanyReportResponse(analysis.getId(), analysis.getCompanyType(), IndustryType.valueOf(industry.getCategoryName()),
                 analysis.getEmployeeCount(), analysis.getDescription(), analysis.getAddress(), analysis.getRevenue(), analysis.getFoundedYear(),
                 analysis.getWebsiteUrl(), analysis.getCreatedBy(), analysis.getUpdatedBy(), analysis.getCreatedAt(), analysis.getUpdatedAt());
     }

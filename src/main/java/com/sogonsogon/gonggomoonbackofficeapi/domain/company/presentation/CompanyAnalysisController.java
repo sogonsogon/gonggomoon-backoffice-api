@@ -6,7 +6,6 @@ import com.sogonsogon.gonggomoonbackofficeapi.domain.company.dto.CompanyReportsR
 import com.sogonsogon.gonggomoonbackofficeapi.domain.company.dto.CreateCompanyReportRequest;
 import com.sogonsogon.gonggomoonbackofficeapi.domain.company.dto.UpdateCompanyReportRequest;
 import com.sogonsogon.gonggomoonbackofficeapi.domain.company.entity.CompanyType;
-import com.sogonsogon.gonggomoonbackofficeapi.domain.industry.category.entity.IndustryType;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

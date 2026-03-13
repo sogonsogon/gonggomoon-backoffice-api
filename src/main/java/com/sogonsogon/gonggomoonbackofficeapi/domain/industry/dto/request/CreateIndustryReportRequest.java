@@ -1,13 +1,13 @@
-package com.sogonsogon.gonggomoonbackofficeapi.domain.industry.analysis.dto.request;
+package com.sogonsogon.gonggomoonbackofficeapi.domain.industry.dto.request;
 
 import java.util.List;
 
 /**
  * 인자의 형태와 NotNull 여부 논의 필요
  */
-public record CreateReportRequest(
+public record CreateIndustryReportRequest(
 
-        Integer analysisYear,
+        Integer reportYear,
 
         String competition,
 
