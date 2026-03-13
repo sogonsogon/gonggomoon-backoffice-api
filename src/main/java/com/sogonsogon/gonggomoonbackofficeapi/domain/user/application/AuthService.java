@@ -5,12 +5,14 @@ import com.sogonsogon.gonggomoonbackofficeapi.domain.user.dto.response.TokenResp
 import com.sogonsogon.gonggomoonbackofficeapi.domain.user.entity.RefreshToken;
 import com.sogonsogon.gonggomoonbackofficeapi.domain.user.infrastructure.RefreshTokenRepository;
 import com.sogonsogon.gonggomoonbackofficeapi.global.security.jwt.TokenProvider;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 public class AuthService {
 
@@ -29,12 +31,16 @@ public class AuthService {
     @Transactional
     public TokenResponse login(LoginRequest request) {
 
+        log.info("Login Logic Start");
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.email(), request.password()));
+        log.info("First Authentication Success");
 
         TokenResponse tokenResponse = tokenProvider.generateTokenDto(authentication);
 
+        log.info("Refresh Token save logic start");
         RefreshToken refreshToken = RefreshToken.create(Long.valueOf(authentication.getName()),tokenResponse.refreshToken());
+        log.info("Refresh Token save logic end");
 
         refreshTokenRepository.save(refreshToken);
 
