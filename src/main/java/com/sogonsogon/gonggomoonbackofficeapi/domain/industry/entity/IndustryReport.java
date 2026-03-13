@@ -26,8 +26,6 @@ import java.util.List;
 @Getter
 @Table(name = "industry_reports")
 @EntityListeners(AuditingEntityListener.class)
-@SQLDelete(sql = "UPDATE industry_reports SET is_deleted = true WHERE id = ?")
-@SQLRestriction("is_deleted = false")
 public class IndustryReport {
 
     @Id
@@ -87,9 +85,6 @@ public class IndustryReport {
     @Column(name = "published_at")
     private Instant publishedAt;
 
-    @Column(name = "is_deleted")
-    private boolean isDeleted;
-
     protected IndustryReport() {}
 
     @Builder
@@ -107,7 +102,6 @@ public class IndustryReport {
         this.hiring = hiring;
         this.investment = investment;
         this.createdBy = createdBy;
-        this.isDeleted = false;
     }
 
     /**

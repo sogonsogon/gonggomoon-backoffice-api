@@ -21,8 +21,6 @@ import java.time.Instant;
 @Table(name = "industries")
 @Getter
 @EntityListeners(AuditingEntityListener.class)
-@SQLDelete(sql = "UPDATE industries SET is_deleted = true WHERE id = ?")
-@SQLRestriction("is_deleted = false")
 public class Industry {
 
     @Id
@@ -46,16 +44,12 @@ public class Industry {
     @Column(name = "updated_at")
     private Instant updatedAt;
 
-    @Column(name = "is_deleted")
-    private boolean isDeleted;
-
     protected Industry () {}
 
     @Builder
     private Industry(String name, Long createdBy) {
         this.name = name;
         this.createdBy = createdBy;
-        this.isDeleted = false;
     }
 
     public static Industry create(String name, Long createdBy) {
