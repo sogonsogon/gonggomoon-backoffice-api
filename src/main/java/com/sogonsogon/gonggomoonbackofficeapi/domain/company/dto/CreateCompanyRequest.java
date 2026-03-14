@@ -2,15 +2,17 @@ package com.sogonsogon.gonggomoonbackofficeapi.domain.company.dto;
 
 import com.sogonsogon.gonggomoonbackofficeapi.domain.company.entity.CompanyType;
 
-public record UpdateCompanyReportRequest(
-        Long industryCategoryId,
-        String companyName,
+/**
+ * 검증 로직 고민
+ */
+public record CreateCompanyRequest(
+        Long industryId,
+        String name,
         CompanyType companyType,
         Integer employeeCount,
         String address,
-        Long revenue,
         Integer foundedYear,
-        String websiteUrl,
+        String url,
         String description
 ) {
 }
