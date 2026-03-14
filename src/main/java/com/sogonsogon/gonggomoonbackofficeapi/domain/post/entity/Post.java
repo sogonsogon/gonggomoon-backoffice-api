@@ -8,6 +8,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
@@ -16,8 +17,10 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.Instant;
 
+//TODO createdBy, publishedBy 있어야 할 듯?
 @Entity
 @Getter
+@Table(name = "posts")
 @EntityListeners(AuditingEntityListener.class)
 public class Post {
 
@@ -25,78 +28,93 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "summit_id")
-    private Long summitId;
+    @Column(name = "submission_id")
+    private Long submissionId;
 
-    @Column(name = "company_id")
+    @Column(name = "company_id", nullable = false)
     private Long companyId;
 
-    @Column(name = "title")
+    @Column(name = "platform_id")
+    private Long platformId;
+
+    @Column(name = "title", nullable = false)
     private String title;
+
+    @Column(name = "url")
+    private String url;
 
     @Column(name = "experience_level")
     private Integer experienceLevel;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "post_status")
+    @Column(name = "status", nullable = false)
     private PostStatus status;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "job_type")
+    @Column(name = "job_type", nullable = false)
     private JobType jobType;
 
-    @Column(columnDefinition = "TEXT")
-    private String content;
+    @Column(name = "original_content", nullable = false, columnDefinition = "TEXT")
+    private String originalContent;
 
-    // 생성자에 추가 되어야 함
-    @Column(name = "post_url")
-    private String url;
+    @Column(name = "started_at", nullable = false)
+    private Instant startedAt;
 
-    @Column(name = "deadline")
-    private Instant deadline;
-
-    @Column(name = "analyzed_at")
-    private Instant analyzedAt;
-
-    @Column(name = "posted_at")
-    private Instant postedAt;
+    @Column(name = "expired_at")
+    private Instant expiredAt;
 
     @CreatedDate
-    @Column(nullable = false, updatable = false)
+    @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 
     @LastModifiedDate
     @Column(name = "updated_at")
     private Instant updatedAt;
 
+    @Column(name = "analyzed_at")
+    private Instant analyzedAt;
+
+    @Column(name = "published_at")
+    private Instant publishedAt;
+
     protected Post() {}
 
     @Builder
-    private Post(Long summitId, Long companyId, String title, Integer experienceLevel, JobType jobType, Instant deadline) {
-        this.summitId = summitId;
+    private Post(Long submissionId, Long companyId, Long platformId, String title,
+                String url, Integer experienceLevel, JobType jobType,
+                String originalContent, Instant startedAt, Instant expiredAt) {
+        this.submissionId = submissionId;
         this.companyId = companyId;
+        this.platformId = platformId;
         this.title = title;
+        this.url = url;
         this.experienceLevel = experienceLevel;
         this.jobType = jobType;
-        this.deadline = deadline;
-        this.status = PostStatus.ANALYZING;
+        this.originalContent = originalContent;
+        this.startedAt = startedAt;
+        this.expiredAt = expiredAt;
     }
 
-    public static Post create(Long summitId, Long companyId, String title,
-                              Integer experienceLevel, JobType jobType, Instant deadline) {
+    public static Post create(Long submissionId, Long companyId, Long platformId, String title,
+                              String url, Integer experienceLevel, JobType jobType,
+                              String originalContent, Instant startedAt, Instant expiredAt) {
         return Post.builder()
-                .summitId(summitId)
+                .submissionId(submissionId)
                 .companyId(companyId)
+                .platformId(platformId)
                 .title(title)
+                .url(url)
                 .experienceLevel(experienceLevel)
                 .jobType(jobType)
-                .deadline(deadline)
+                .originalContent(originalContent)
+                .startedAt(startedAt)
+                .expiredAt(expiredAt)
                 .build();
     }
 
     public void publish() {
-        if (this.status == PostStatus.POSTED) throw new IllegalArgumentException();
-        this.status = PostStatus.POSTED;
+        this.status = PostStatus.PUBLISHED;
+        this.publishedAt = Instant.now();
     }
 
 }

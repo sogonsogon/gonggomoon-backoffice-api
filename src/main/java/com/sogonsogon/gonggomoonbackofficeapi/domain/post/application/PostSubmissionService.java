@@ -1,14 +1,15 @@
 package com.sogonsogon.gonggomoonbackofficeapi.domain.post.application;
 
-import com.sogonsogon.gonggomoonbackofficeapi.domain.post.dto.ApproveSummitRequest;
+import com.sogonsogon.gonggomoonbackofficeapi.domain.post.dto.CreatePostRequest;
 import com.sogonsogon.gonggomoonbackofficeapi.domain.post.dto.RejectSummitRequest;
-import com.sogonsogon.gonggomoonbackofficeapi.domain.post.dto.SubmitPostRequest;
+import com.sogonsogon.gonggomoonbackofficeapi.domain.post.dto.SubmissionListResponse;
 import com.sogonsogon.gonggomoonbackofficeapi.domain.post.entity.Post;
+import com.sogonsogon.gonggomoonbackofficeapi.domain.post.entity.PostRepository;
 import com.sogonsogon.gonggomoonbackofficeapi.domain.post.entity.PostSubmission;
-import com.sogonsogon.gonggomoonbackofficeapi.domain.post.entity.SubmissionPlatform;
-import com.sogonsogon.gonggomoonbackofficeapi.domain.post.entity.SubmissionStatus;
-import com.sogonsogon.gonggomoonbackofficeapi.domain.post.infrastructure.PostRepository;
-import com.sogonsogon.gonggomoonbackofficeapi.domain.post.infrastructure.PostSubmissionRepository;
+import com.sogonsogon.gonggomoonbackofficeapi.domain.post.entity.PostSubmissionRepository;
+import com.sogonsogon.gonggomoonbackofficeapi.domain.post.entity.PostSubmissionStatus;
+import com.sogonsogon.gonggomoonbackofficeapi.domain.post.error.PostSubmissionErrorCode;
+import com.sogonsogon.gonggomoonbackofficeapi.global.error.BaseException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -25,45 +26,27 @@ public class PostSubmissionService {
         this.postRepository = postRepository;
     }
 
-    public void submitPost(SubmitPostRequest request, Long approvedBy) {
-
-    }
-
-    // 플랫폼 DB로 관리해야 할듯?
-    @Transactional(readOnly = true)
-    public Page<PostSubmission> getSubmissions(SubmissionStatus status, SubmissionPlatform platform, Pageable pageable) {
-
-        if (status != null) {
-            return postSubmissionRepository.findByStatus(status, pageable);
-        } else if (platform != null) {
-            return postSubmissionRepository.findByPlatform(platform, pageable);
-        }
-
-        return postSubmissionRepository.findAll(pageable);
-    }
-
+    //TODO companyId, platformId로 해당 데이터 존재하는지 검증하는 로직 필요함
     @Transactional
-    public void approveSubmission(Long id, ApproveSummitRequest request, Long approvedBy) {
+    public void approveSubmission(Long submissionId, CreatePostRequest request, Long processedBy) {
 
-        Post newPost;
+        PostSubmission submission = postSubmissionRepository.findById(submissionId)
+                .orElseThrow(() -> new BaseException(PostSubmissionErrorCode.POST_SUBMISSION_NOT_FOUND));
 
-        if (id != null) {
-            PostSubmission submission = postSubmissionRepository.findById(id).orElseThrow(IllegalArgumentException::new);
+        submission.approveSummit(processedBy);
 
-            submission.approveSummit(SubmissionStatus.APPROVED, approvedBy);
-
-            newPost = Post.create(submission.getId(), request.companyId(), request.title(), request.experienceLevel(), request.jobType(), request.deadline());
-        } else {
-
-            newPost = Post.create(
-                    null,
-                    request.companyId(),
-                    request.title(),
-                    request.experienceLevel(),
-                    request.jobType(),
-                    request.deadline()
-            );
-        }
+        Post newPost = Post.create(
+                submissionId,
+                request.companyId(),
+                request.platformId(),
+                request.title(),
+                request.url(),
+                request.experienceLevel(),
+                request.jobType(),
+                request.originalContent(),
+                request.startDate(),
+                request.dueDate()
+        );
 
         postRepository.save(newPost);
     }
@@ -71,8 +54,21 @@ public class PostSubmissionService {
     @Transactional
     public void rejectSubmission(Long id, RejectSummitRequest request, Long rejectBy) {
 
-        PostSubmission submission = postSubmissionRepository.findById(id).orElseThrow(IllegalArgumentException::new);
+        PostSubmission submission = postSubmissionRepository.findById(id)
+                .orElseThrow(() -> new BaseException(PostSubmissionErrorCode.POST_SUBMISSION_NOT_FOUND));
 
-        submission.rejectSummit(SubmissionStatus.REJECTED, request.rejectionReason(), rejectBy);
+        if (submission.getStatus() != PostSubmissionStatus.PENDING) {
+            throw new BaseException(PostSubmissionErrorCode.POST_SUBMISSION_ALREADY_PROCESSED);
+        }
+
+        submission.rejectSummit(request.rejectionReason(), rejectBy);
     }
+
+    // 플랫폼 DB로 관리해야 할듯?
+    @Transactional(readOnly = true)
+    public Page<SubmissionListResponse> getSubmissions(PostSubmissionStatus status, Pageable pageable) {
+
+        return postSubmissionRepository.findByStatus(status, pageable);
+    }
+
 }

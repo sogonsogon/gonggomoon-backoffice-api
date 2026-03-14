@@ -26,45 +26,43 @@ public class PostSubmission {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "requested_by", updatable = false)
-    private Long requestedBy;
+    @Column(name = "url", nullable = false)
+    private String url;
 
-    @Column(name = "request_url")
-    private String requestUrl;
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
 
+    @Column(name = "platform_id", nullable = false)
+    private Long platformId;
+
+    @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
-    private SubmissionStatus status;
+    private PostSubmissionStatus status;
+
+    @Column(name = "processed_by")
+    private Long processedBy;
 
     @Column(name = "rejection_reason")
     private String rejectionReason;
 
-    @Enumerated(EnumType.STRING)
-    private SubmissionPlatform platform;
-
-    @Column(name = "approved_by", updatable = false)
-    private Long approvedBy;
-
-    @Column(name = "rejected_by")
-    private Long rejectedBy;
-
     @CreatedDate
-    @Column(name = "created_at")
+    @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 
     @LastModifiedDate
-    @Column(name = "updated_at")
-    private Instant updated_at;
+    @Column(name = "processed_at", nullable = false)
+    private Instant processedAt;
 
     protected PostSubmission() {}
 
-    public void approveSummit(SubmissionStatus status, Long approvedBy) {
-        this.status = status;
-        this.approvedBy = approvedBy;
+    public void approveSummit(Long processedBy) {
+        this.status = PostSubmissionStatus.APPROVED;
+        this.processedBy = processedBy;
     }
 
-    public void rejectSummit(SubmissionStatus status, String rejectionReason, Long rejectedBy) {
-        this.status = status;
-        this.rejectedBy = rejectedBy;
+    public void rejectSummit(String rejectionReason, Long processedBy) {
+        this.status = PostSubmissionStatus.REJECTED;
+        this.processedBy = processedBy;
         this.rejectionReason = rejectionReason;
     }
 }

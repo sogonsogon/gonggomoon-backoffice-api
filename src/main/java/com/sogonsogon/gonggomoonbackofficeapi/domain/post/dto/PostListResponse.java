@@ -1,25 +1,20 @@
 package com.sogonsogon.gonggomoonbackofficeapi.domain.post.dto;
 
-import com.sogonsogon.gonggomoonbackofficeapi.domain.post.entity.JobType;
 import com.sogonsogon.gonggomoonbackofficeapi.domain.post.entity.PostStatus;
 
 import java.time.Instant;
 
-public record PostResponse(
+// AI 한줄 분석 추가해야 함
+public record PostListResponse(
         Long postId,
         Long companyId,
-        Long industryId,
         Long platformId,
         String postTitle,
         String companyName,
-        String industryName,
         String platformName,
-        String postUrl,
-        Integer experienceLevel,
-        JobType jobType,
-        String originalContent,
-        PostStatus status,
+        PostStatus postStatus,
         Instant startDate,
-        Instant dueDate
+        Instant dueDate,
+        boolean expired
 ) {
 }

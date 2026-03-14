@@ -4,12 +4,15 @@ import com.sogonsogon.gonggomoonbackofficeapi.domain.post.entity.JobType;
 
 import java.time.Instant;
 
-public record ApproveSummitRequest(
-        Long summitId,
+public record CreatePostRequest(
         Long companyId,
+        Long platformId,
         String title,
-        Integer experienceLevel,
+        String url,
         JobType jobType,
-        Instant deadline
+        String originalContent,
+        Integer experienceLevel,
+        Instant startDate,
+        Instant dueDate
 ) {
 }
