@@ -1,13 +1,11 @@
 package com.sogonsogon.gonggomoonbackofficeapi.domain.post.presentation;
 
 import com.sogonsogon.gonggomoonbackofficeapi.domain.post.application.PostSubmissionService;
-import com.sogonsogon.gonggomoonbackofficeapi.domain.post.dto.ApproveSummitRequest;
+import com.sogonsogon.gonggomoonbackofficeapi.domain.post.dto.CreatePostRequest;
 import com.sogonsogon.gonggomoonbackofficeapi.domain.post.dto.RejectSummitRequest;
-import com.sogonsogon.gonggomoonbackofficeapi.domain.post.dto.SubmitPostRequest;
-import com.sogonsogon.gonggomoonbackofficeapi.domain.post.dto.SubmitPostResponse;
-import com.sogonsogon.gonggomoonbackofficeapi.domain.post.entity.PostSubmission;
-import com.sogonsogon.gonggomoonbackofficeapi.domain.post.entity.SubmissionPlatform;
-import com.sogonsogon.gonggomoonbackofficeapi.domain.post.entity.SubmissionStatus;
+import com.sogonsogon.gonggomoonbackofficeapi.domain.post.dto.SubmissionListResponse;
+import com.sogonsogon.gonggomoonbackofficeapi.domain.post.entity.PostSubmissionStatus;
+import com.sogonsogon.gonggomoonbackofficeapi.global.response.BaseResponse;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,7 +14,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,44 +30,44 @@ public class PostSubmissionController {
         this.submissionService = submissionService;
     }
 
-    @PostMapping
-    public ResponseEntity<Void> submitPost(@RequestBody @Valid SubmitPostRequest request,
-                                           @AuthenticationPrincipal UserDetails details) {
+    @PutMapping("/{submissionId}/approve")
+    public ResponseEntity<BaseResponse<Void>> approveSubmission(@PathVariable Long submissionId,
+                                                                @RequestBody @Valid CreatePostRequest request,
+                                                                @AuthenticationPrincipal UserDetails details
+    ) {
 
-        submissionService.submitPost(request, Long.valueOf(details.getUsername()));
+        submissionService.approveSubmission(submissionId, request, Long.valueOf(details.getUsername()));
 
-        return ResponseEntity.ok().build();
-    }
-
-    @GetMapping
-    public ResponseEntity<Page<SubmitPostResponse>> getSubmissions(
-            @RequestParam(required = false) SubmissionStatus status,
-            @RequestParam(required = false) SubmissionPlatform platform,
-            Pageable pageable
-            ) {
-
-        Page<PostSubmission> submissions = submissionService.getSubmissions(status, platform, pageable);
-
-        return ResponseEntity.ok(submissions.map(SubmitPostResponse::from));
-    }
-
-    @PutMapping("/{id}/approve")
-    public ResponseEntity<Void> approveSubmission(@PathVariable Long id,
-                                                  @RequestBody @Valid ApproveSummitRequest request,
-                                                  @AuthenticationPrincipal UserDetails details) {
-
-        submissionService.approveSubmission(id, request, Long.valueOf(details.getUsername()));
-
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(BaseResponse.success());
     }
 
     @PutMapping("/{id}/rejcet")
-    public ResponseEntity<Void> rejectSubmission(@PathVariable Long id,
-                                                  @RequestBody @Valid RejectSummitRequest request,
-                                                  @AuthenticationPrincipal UserDetails details) {
+    public ResponseEntity<BaseResponse<Void>> rejectSubmission(@PathVariable Long id,
+                                                 @RequestBody @Valid RejectSummitRequest request,
+                                                 @AuthenticationPrincipal UserDetails details) {
 
         submissionService.rejectSubmission(id, request, Long.valueOf(details.getUsername()));
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(BaseResponse.success());
+    }
+
+    @GetMapping
+    public ResponseEntity<BaseResponse<BaseResponse.PageResponse<SubmissionListResponse>>> getSubmissions(
+            @RequestParam PostSubmissionStatus status,
+            Pageable pageable) {
+
+        Page<SubmissionListResponse> response = submissionService.getSubmissions(status, pageable);
+
+        return ResponseEntity.ok(BaseResponse.success(
+                BaseResponse.PageResponse.<SubmissionListResponse>builder()
+                        .content(response.getContent())
+                        .pageInfo(BaseResponse.PageInfo.builder()
+                                .currentPage(response.getNumber())
+                                .totalPages(response.getTotalPages())
+                                .totalElements(response.getTotalElements())
+                                .hasNext(response.hasNext())
+                                .build())
+                        .build())
+        );
     }
 }
