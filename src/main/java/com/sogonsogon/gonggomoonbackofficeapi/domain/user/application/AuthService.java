@@ -39,6 +39,8 @@ public class AuthService {
         TokenResponse tokenResponse = tokenProvider.generateTokenDto(authentication);
 
         log.info("Refresh Token save logic start");
+        refreshTokenRepository.deleteByUserId(Long.valueOf(authentication.getName()));
+
         RefreshToken refreshToken = RefreshToken.create(Long.valueOf(authentication.getName()),tokenResponse.refreshToken());
         log.info("Refresh Token save logic end");
 
