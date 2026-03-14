@@ -21,20 +21,20 @@ public interface PostRepository extends JpaRepository<Post, Long> {
                       p.id,
                       p.title,
                       p.experienceLevel,
-                      c.companyName,
+                      c.name,
                       p.jobType,
                       p.deadline,
                       p.status
                       )
            FROM Post p
-           Join CompanyAnalysis c ON c.id = p.companyId
+           Join Company c ON c.id = p.companyId
            WHERE p.jobType = :type
            AND p.status = :status
            """,
     countQuery = """
         SELECT COUNT(p)
         FROM Post p
-        JOIN CompanyAnalysis c ON c.id = p.companyId
+        JOIN Company c ON c.id = p.companyId
         WHERE p.jobType = :type
         AND p.status = :status
         """)
@@ -48,20 +48,20 @@ public interface PostRepository extends JpaRepository<Post, Long> {
                       p.id,
                       p.title,
                       p.experienceLevel,
-                      c.companyName,
+                      c.name,
                       p.jobType,
                       p.deadline,
                       p.status
                       )
            FROM Post p
-           Join CompanyAnalysis c ON c.id = p.companyId
+           Join Company c ON c.id = p.companyId
            WHERE p.title LIKE %:title%
            AND p.status = :status
            """,
             countQuery = """
         SELECT COUNT(p)
         FROM Post p
-        JOIN CompanyAnalysis c ON c.id = p.companyId
+        JOIN Company c ON c.id = p.companyId
         WHERE p.title LIKE %:title%
         AND p.status = :status
         """)
@@ -75,19 +75,19 @@ public interface PostRepository extends JpaRepository<Post, Long> {
                       p.id,
                       p.title,
                       p.experienceLevel,
-                      c.companyName,
+                      c.name,
                       p.jobType,
                       p.deadline,
                       p.status
                       )
            FROM Post p
-           Join CompanyAnalysis c ON c.id = p.companyId
+           Join Company c ON c.id = p.companyId
            WHERE p.status = :status
            """,
             countQuery = """
         SELECT COUNT(p)
         FROM Post p
-        JOIN CompanyAnalysis c ON c.id = p.companyId
+        JOIN Company c ON c.id = p.companyId
         WHERE p.status = :status
         """)
     Page<PostsResponse> searchByStatus(@Param("status") PostStatus status, Pageable pageable);
@@ -96,8 +96,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             value = """
            SELECT new com.sogonsogon.gonggomoonbackofficeapi.domain.post.dto.PostResponse(
                       c.id,
-                      c.companyName,
-                      i.categoryName,
+                      c.name,
+                      i.name,
                       p.title,
                       p.experienceLevel,
                       p.deadline,
@@ -106,8 +106,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
                       p.status
                       )
            FROM Post p
-           Join CompanyAnalysis c ON c.id = p.companyId
-           JOIN IndustryCategory i ON i.id = c.industryCategoryId
+           Join Company c ON c.id = p.companyId
+           JOIN Industry i ON i.id = c.industryId
            WHERE p.id = :id
            AND p.status = :status
            """)

@@ -4,16 +4,17 @@ import com.sogonsogon.gonggomoonbackofficeapi.domain.company.entity.CompanyType;
 
 import java.time.Instant;
 
-public record CompanyReportResponse(
+public record CompanyResponse(
         Long companyId,
+        Long industryId,
+        String companyName,
         CompanyType companyType,
-        IndustryType industryType,
+        String industryName,
+        String url,
+        Integer foundedYear,
+        String address,
         Integer employeeCount,
         String description,
-        String address,
-        Long revenue,
-        Integer foundedYear,
-        String websiteUrl,
         Long createdBy,
         Long updatedBy,
         Instant createdAt,
