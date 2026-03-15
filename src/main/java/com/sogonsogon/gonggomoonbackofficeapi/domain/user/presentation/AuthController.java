@@ -3,6 +3,7 @@ package com.sogonsogon.gonggomoonbackofficeapi.domain.user.presentation;
 import com.sogonsogon.gonggomoonbackofficeapi.domain.user.application.AuthService;
 import com.sogonsogon.gonggomoonbackofficeapi.domain.user.dto.request.LoginRequest;
 import com.sogonsogon.gonggomoonbackofficeapi.domain.user.dto.response.TokenResponse;
+import com.sogonsogon.gonggomoonbackofficeapi.global.response.BaseResponse;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -23,11 +24,11 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<TokenResponse> login(@Valid @RequestBody LoginRequest request) {
+    public ResponseEntity<BaseResponse<TokenResponse>> login(@Valid @RequestBody LoginRequest request) {
 
         log.info("Enter AuthController.login");
         TokenResponse tokenResponse = authService.login(request);
 
-        return ResponseEntity.ok(tokenResponse);
+        return ResponseEntity.ok(BaseResponse.success(tokenResponse));
     }
 }
