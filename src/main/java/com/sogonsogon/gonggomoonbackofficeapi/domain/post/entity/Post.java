@@ -86,6 +86,7 @@ public class Post {
         this.submissionId = submissionId;
         this.companyId = companyId;
         this.platformId = platformId;
+        this.status = PostStatus.ANALYZING;
         this.title = title;
         this.url = url;
         this.experienceLevel = experienceLevel;
