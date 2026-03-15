@@ -7,7 +7,8 @@ public enum IndustryErrorCode implements BaseErrorCode {
 
     INDUSTRY_NOT_FOUND("INDUSTRY_NOT_FOUND", HttpStatus.NOT_FOUND, "존재하지 않은 산업입니다."),
     INDUSTRY_DUPLICATE_NAME("INDUSTRY_DUPLICATE_NAME", HttpStatus.CONFLICT, "이미 존재하는 산업 이름입니다."),
-
+    INVALID_INDUSTRY_NAME("INVALID_INDUSTRY_NAME", HttpStatus.BAD_REQUEST, "산업 이름은 필수입니다."),
+    INVALID_INDUSTRY_CREATOR("INVALID_INDUSTRY_CREATOR", HttpStatus.BAD_REQUEST, "생성자 정보가 올바르지 않습니다.")
     ;
 
     private final String code;
