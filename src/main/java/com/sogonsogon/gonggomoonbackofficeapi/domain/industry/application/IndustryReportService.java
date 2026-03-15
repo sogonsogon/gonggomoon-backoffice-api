@@ -7,12 +7,13 @@ import com.sogonsogon.gonggomoonbackofficeapi.domain.industry.entity.IndustryRep
 import com.sogonsogon.gonggomoonbackofficeapi.domain.industry.entity.IndustryReportRepository;
 import com.sogonsogon.gonggomoonbackofficeapi.domain.industry.entity.IndustryRepository;
 import com.sogonsogon.gonggomoonbackofficeapi.domain.industry.entity.Industry;
+import com.sogonsogon.gonggomoonbackofficeapi.domain.industry.error.IndustryReportErrorCode;
+import com.sogonsogon.gonggomoonbackofficeapi.global.error.BaseException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class IndustryReportService {
@@ -33,9 +34,9 @@ public class IndustryReportService {
     @Transactional
     public void createReport(CreateIndustryReportRequest request, Long industryId, Long userId) {
 
-        if (!industryRepository.existsById(industryId)) throw new IllegalArgumentException();
+        if (!industryRepository.existsById(industryId)) throw new BaseException(IndustryReportErrorCode.INDUSTRY_REPORT_NOT_FOUND);
 
-        if (request.reportYear() > LocalDate.now().getYear()) throw new IllegalArgumentException();
+        if (request.reportYear() > LocalDate.now().getYear()) throw new BaseException(IndustryReportErrorCode.INVALID_REPORT_YEAR);
 
         IndustryReport newIndustryReport = IndustryReport.create(
                 industryId,
@@ -60,7 +61,7 @@ public class IndustryReportService {
     public IndustryReportListResponse getReports(Long industryId) {
 
         Industry industry = industryRepository.findById(industryId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new BaseException(IndustryReportErrorCode.INDUSTRY_REPORT_NOT_FOUND));
 
         List<IndustryReport> reports = industryReportRepository.findByIndustryId(industryId);
 
@@ -87,7 +88,7 @@ public class IndustryReportService {
     public IndustryReportResponse getReport(Long industryReportId) {
 
         IndustryReportResponse response = industryReportRepository.getIndustryReport(industryReportId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new BaseException(IndustryReportErrorCode.INDUSTRY_REPORT_NOT_FOUND));
 
         return response;
     }
@@ -99,11 +100,14 @@ public class IndustryReportService {
     public void publishReport(Long industryReportId, Long publishedBy) {
 
         IndustryReport report = industryReportRepository.findById(industryReportId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new BaseException(IndustryReportErrorCode.INDUSTRY_REPORT_NOT_FOUND));
 
         industryReportRepository.resetOtherToPending(report.getIndustryId(), industryReportId);
 
-        report.publish(publishedBy);
+        IndustryReport updatedReport = industryReportRepository.findById(industryReportId)
+                .orElseThrow(() -> new BaseException(IndustryReportErrorCode.INDUSTRY_REPORT_NOT_FOUND));
+
+        updatedReport.publish(publishedBy);
     }
 
     /**
@@ -112,7 +116,8 @@ public class IndustryReportService {
     @Transactional
     public void deleteReport(Long id) {
 
-        IndustryReport report = industryReportRepository.findById(id).orElseThrow(IllegalArgumentException::new);
+        IndustryReport report = industryReportRepository.findById(id)
+                .orElseThrow(() -> new BaseException(IndustryReportErrorCode.INDUSTRY_REPORT_NOT_FOUND));
 
         industryReportRepository.delete(report);
     }
