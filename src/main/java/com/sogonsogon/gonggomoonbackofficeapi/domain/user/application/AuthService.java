@@ -38,10 +38,14 @@ public class AuthService {
 
         TokenResponse tokenResponse = tokenProvider.generateTokenDto(authentication);
 
-        log.info("Refresh Token save logic start");
-        refreshTokenRepository.deleteByUserId(Long.valueOf(authentication.getName()));
+        RefreshToken refreshToken = refreshTokenRepository.findByUserId(Long.valueOf(authentication.getName()))
+                .map(existingToken -> {
+                    return existingToken.updateValue(tokenResponse.refreshToken());
+                })
+                .orElseGet(() -> {
+                    return RefreshToken.create(Long.valueOf(authentication.getName()), tokenResponse.refreshToken());
+                });
 
-        RefreshToken refreshToken = RefreshToken.create(Long.valueOf(authentication.getName()),tokenResponse.refreshToken());
         log.info("Refresh Token save logic end");
 
         refreshTokenRepository.save(refreshToken);
