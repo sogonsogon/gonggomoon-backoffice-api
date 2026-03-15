@@ -1,5 +1,7 @@
 package com.sogonsogon.gonggomoonbackofficeapi.domain.industry.entity;
 
+import com.sogonsogon.gonggomoonbackofficeapi.domain.industry.error.IndustryErrorCode;
+import com.sogonsogon.gonggomoonbackofficeapi.global.error.BaseException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -9,8 +11,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.Getter;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.SQLRestriction;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -54,8 +54,8 @@ public class Industry {
 
     public static Industry create(String name, Long createdBy) {
 
-        if (name == null || name.isBlank()) throw new IllegalArgumentException();
-        if (createdBy == null || createdBy <= 0) throw new IllegalArgumentException();
+        if (name == null || name.isBlank()) throw new BaseException(IndustryErrorCode.INVALID_INDUSTRY_NAME);
+        if (createdBy == null || createdBy < 0) throw new BaseException(IndustryErrorCode.INVALID_INDUSTRY_CREATOR);
 
         return Industry.builder()
                 .name(name)
@@ -65,8 +65,8 @@ public class Industry {
 
     public void update(String name, Long updatedBy) {
 
-        if (name == null || name.isBlank()) throw new IllegalArgumentException();
-        if (id == null || id <= 0) throw new IllegalArgumentException();
+        if (name == null || name.isBlank()) throw new BaseException(IndustryErrorCode.INVALID_INDUSTRY_NAME);
+        if (id == null || id < 0) throw new BaseException(IndustryErrorCode.INVALID_INDUSTRY_CREATOR);
 
         this.name = name;
         this.updatedBy = updatedBy;

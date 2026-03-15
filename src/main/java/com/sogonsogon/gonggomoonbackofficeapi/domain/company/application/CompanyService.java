@@ -31,7 +31,7 @@ public class CompanyService {
     @Transactional
     public void create(CreateCompanyRequest request, Long userId) {
 
-        if (!companyRepository.existsCompanyByName(request.name())) throw new BaseException(CompanyErrorCode.COMPANY_DUPLICATE_NAME);
+        if (companyRepository.existsCompanyByName(request.name())) throw new BaseException(CompanyErrorCode.COMPANY_DUPLICATE_NAME);
 
         Company company = Company.create(
                 request.industryId(),

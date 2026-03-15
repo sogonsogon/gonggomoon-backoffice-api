@@ -30,7 +30,7 @@ public class IndustryService {
     public void createIndustry(CreateIndustryRequest request,
                                Long userId) {
 
-        if (industryRepository.existsByName(request.industryName())) throw new IllegalArgumentException();
+        if (industryRepository.existsByName(request.industryName())) throw new BaseException(IndustryErrorCode.INDUSTRY_DUPLICATE_NAME);
 
         Industry newIndustry = Industry.create(request.industryName(), userId);
 
