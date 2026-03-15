@@ -4,6 +4,7 @@ import com.sogonsogon.gonggomoonbackofficeapi.domain.industry.application.Indust
 import com.sogonsogon.gonggomoonbackofficeapi.domain.industry.dto.request.CreateIndustryReportRequest;
 import com.sogonsogon.gonggomoonbackofficeapi.domain.industry.dto.response.IndustryReportResponse;
 import com.sogonsogon.gonggomoonbackofficeapi.domain.industry.dto.response.IndustryReportListResponse;
+import com.sogonsogon.gonggomoonbackofficeapi.global.response.BaseResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -16,9 +17,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/admin")
@@ -34,41 +32,41 @@ public class IndustryReportController {
      * 분석 생성
      */
     @PostMapping("/industries/{industryId}/reports")
-    public ResponseEntity<Void> createReport(@PathVariable Long industryId,
-                                             @RequestBody @Valid CreateIndustryReportRequest request,
-                                             @AuthenticationPrincipal UserDetails details) {
+    public ResponseEntity<BaseResponse<Void>> createReport(@PathVariable Long industryId,
+                                                     @RequestBody @Valid CreateIndustryReportRequest request,
+                                                     @AuthenticationPrincipal UserDetails details) {
 
         industryReportService.createReport(request, industryId, Long.valueOf(details.getUsername()));
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(BaseResponse.success());
     }
 
     @GetMapping("/industries/{industryId}/reports")
-    public ResponseEntity<IndustryReportListResponse> getReports(@PathVariable Long industryId) {
+    public ResponseEntity<BaseResponse<IndustryReportListResponse>> getReports(@PathVariable Long industryId) {
 
-        return ResponseEntity.ok(industryReportService.getReports(industryId));
+        return ResponseEntity.ok(BaseResponse.success(industryReportService.getReports(industryId)));
     }
 
     @GetMapping("/industries/reports/{id}")
-    public ResponseEntity<IndustryReportResponse> getReport(@PathVariable Long id) {
+    public ResponseEntity<BaseResponse<IndustryReportResponse>> getReport(@PathVariable Long id) {
 
-        return ResponseEntity.ok(industryReportService.getReport(id));
+        return ResponseEntity.ok(BaseResponse.success(industryReportService.getReport(id)));
     }
 
     @PatchMapping("/industries/reports/{id}/publish")
-    public ResponseEntity<Void> publishReport(@PathVariable Long id,
+    public ResponseEntity<BaseResponse<Void>> publishReport(@PathVariable Long id,
                                               @AuthenticationPrincipal UserDetails details) {
 
         industryReportService.publishReport(id, Long.valueOf(details.getUsername()));
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(BaseResponse.success());
     }
 
     @DeleteMapping("/industries/reports/{id}")
-    public ResponseEntity<Void> deleteReport(@PathVariable Long id) {
+    public ResponseEntity<BaseResponse<Void>> deleteReport(@PathVariable Long id) {
 
         industryReportService.deleteReport(id);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(BaseResponse.success());
     }
 }
