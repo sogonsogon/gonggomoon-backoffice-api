@@ -6,6 +6,8 @@ import com.sogonsogon.gonggomoonbackofficeapi.domain.industry.dto.response.Indus
 import com.sogonsogon.gonggomoonbackofficeapi.domain.industry.dto.response.IndustryResponse;
 import com.sogonsogon.gonggomoonbackofficeapi.domain.industry.entity.Industry;
 import com.sogonsogon.gonggomoonbackofficeapi.domain.industry.entity.IndustryRepository;
+import com.sogonsogon.gonggomoonbackofficeapi.domain.industry.error.IndustryErrorCode;
+import com.sogonsogon.gonggomoonbackofficeapi.global.error.BaseException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,7 +27,8 @@ public class IndustryService {
      * 동일한 이름의 카테고리 생성 방지 필요
      */
     @Transactional
-    public void createIndustry(CreateIndustryRequest request, Long userId) {
+    public void createIndustry(CreateIndustryRequest request,
+                               Long userId) {
 
         if (industryRepository.existsByName(request.industryName())) throw new IllegalArgumentException();
 
@@ -40,10 +43,10 @@ public class IndustryService {
     @Transactional
     public void updateIndustryCategory(UpdateIndustryRequest request, Long id, Long userId) {
 
-        if (industryRepository.existsByName(request.industryName())) throw new IllegalArgumentException();
+        if (industryRepository.existsByName(request.industryName())) throw new BaseException(IndustryErrorCode.INDUSTRY_DUPLICATE_NAME);
 
         Industry industry = industryRepository.findById(id)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new BaseException(IndustryErrorCode.INDUSTRY_NOT_FOUND));
 
         industry.update(request.industryName(), userId);
     }
@@ -63,7 +66,7 @@ public class IndustryService {
     public void deleteIndustry(Long industryId) {
 
         Industry industry = industryRepository.findById(industryId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new BaseException(IndustryErrorCode.INDUSTRY_NOT_FOUND));
 
         industryRepository.delete(industry);
     }
