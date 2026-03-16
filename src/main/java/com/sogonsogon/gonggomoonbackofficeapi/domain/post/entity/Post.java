@@ -57,6 +57,9 @@ public class Post {
     @Column(name = "original_content", nullable = false, columnDefinition = "TEXT")
     private String originalContent;
 
+    @Column(name = "analyzed_content", columnDefinition = "TEXT")
+    private String analyzedContent;
+
     @Column(name = "started_at", nullable = false)
     private Instant startedAt;
 
@@ -116,6 +119,12 @@ public class Post {
     public void publish() {
         this.status = PostStatus.PUBLISHED;
         this.publishedAt = Instant.now();
+    }
+
+    public void updateAnalyzedResult(String analyzedContent) {
+        this.analyzedContent = analyzedContent;
+        this.status = PostStatus.ANALYZED;
+        this.analyzedAt = Instant.now();
     }
 
 }
