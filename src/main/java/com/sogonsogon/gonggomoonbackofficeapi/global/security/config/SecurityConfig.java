@@ -8,6 +8,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -24,13 +25,9 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity,
-                                           CorsConfigurationSource corsConfigurationSource) throws Exception {
-//        CharacterEncodingFilter characterEncodingFilter = new CharacterEncodingFilter();
-//        characterEncodingFilter.setEncoding("UTF-8");
-//        characterEncodingFilter.setForceEncoding(true);
+                                           CorsConfigurationSource corsConfigurationSource, AuthenticationEntryPoint authenticationEntryPoint) throws Exception {
 
         httpSecurity
-
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> {})
                 .sessionManagement(session -> {session.sessionCreationPolicy(SessionCreationPolicy.STATELESS);})
@@ -41,17 +38,14 @@ public class SecurityConfig {
 
                         .requestMatchers("/api/v1/admin/auth/login").permitAll()
                         .requestMatchers("/actuator/health").permitAll() // 헬스체크는 모두 허용
-//                        .requestMatchers("/api/v1/admin/industries").permitAll()
 
                         .anyRequest().authenticated()
                 )
 
-//                .exceptionHandling(ex -> ex
-//                        .authenticationEntryPoint()
-//                        .accessDeniedHandler()
-//                )
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint(authenticationEntryPoint)
+                )
                 .addFilterBefore(new JwtAuthenticationFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);
-//                .addFilterBefore();
 
         return httpSecurity.build();
     }

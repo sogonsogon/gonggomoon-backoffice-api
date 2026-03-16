@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/admin/submissions")
+@RequestMapping("/api/v1/admin/posts/submissions")
 public class PostSubmissionController {
 
     private final PostSubmissionService submissionService;
@@ -53,7 +53,7 @@ public class PostSubmissionController {
 
     @GetMapping
     public ResponseEntity<BaseResponse<BaseResponse.PageResponse<SubmissionListResponse>>> getSubmissions(
-            @RequestParam PostSubmissionStatus status,
+            @RequestParam(required = false) PostSubmissionStatus status,
             Pageable pageable) {
 
         Page<SubmissionListResponse> response = submissionService.getSubmissions(status, pageable);
