@@ -1,5 +1,6 @@
 package com.sogonsogon.gonggomoonbackofficeapi.domain.post.application;
 
+import com.sogonsogon.gonggomoonbackofficeapi.domain.ai.application.AiService;
 import com.sogonsogon.gonggomoonbackofficeapi.domain.post.dto.CreatePostRequest;
 import com.sogonsogon.gonggomoonbackofficeapi.domain.post.dto.PostResponse;
 import com.sogonsogon.gonggomoonbackofficeapi.domain.post.dto.PostListResponse;
@@ -20,12 +21,15 @@ import java.util.List;
 public class PostService {
 
     private final PostRepository postRepository;
+    private final AiService aiService;
 
-    public PostService(PostRepository postRepository) {
+    public PostService(PostRepository postRepository, AiService aiService) {
         this.postRepository = postRepository;
+        this.aiService = aiService;
     }
 
     //TODO: company, platform 존재 여부, 시작일이 마감일 이전인지 확인 하는 로직
+    // 공고 등록
     @Transactional
     public void createPost(CreatePostRequest request) {
 
@@ -46,7 +50,12 @@ public class PostService {
                 request.dueDate()
         );
 
-        postRepository.save(newPost);
+        Post savedPost = postRepository.save(newPost);
+
+        // 공고 등록과 동시에 분석 요청
+        // NOTE : 공고 분석을 요청하는 주체는 관리자이지만, AI 서버에서는 사용자 ID가 필요한 경우가 있을 수 있으므로, 현재는 0L로 고정하여 전달
+        aiService.requestAnalyzePost(0L,savedPost.getId());
+
     }
 
     @Transactional(readOnly = true)
