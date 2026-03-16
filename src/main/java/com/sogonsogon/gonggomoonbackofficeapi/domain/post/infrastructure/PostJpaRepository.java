@@ -10,11 +10,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
+@Repository
 public interface PostJpaRepository extends JpaRepository<Post, Long>, PostRepository {
 
     @Query(
@@ -33,7 +35,7 @@ public interface PostJpaRepository extends JpaRepository<Post, Long>, PostReposi
                       )
                 FROM Post p
                 JOIN Company c ON c.id = p.companyId
-                JOIN Platform pl ON pl.id = p.platformId
+                LEFT JOIN Platform pl ON pl.id = p.platformId
                 WHERE (:title IS NULL OR p.title LIKE %:title%)
                 AND (:statuses IS NULL OR p.status IN :statuses)
            """,

@@ -1,5 +1,7 @@
 package com.sogonsogon.gonggomoonbackofficeapi.global.security.filter;
 
+import com.sogonsogon.gonggomoonbackofficeapi.domain.user.error.UserErrorCode;
+import com.sogonsogon.gonggomoonbackofficeapi.global.error.BaseException;
 import com.sogonsogon.gonggomoonbackofficeapi.global.security.jwt.TokenProvider;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
@@ -36,8 +38,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             Authentication auth = tokenProvider.getAuthentication(token);
             SecurityContextHolder.getContext().setAuthentication(auth);
 
-        } catch (JwtException e) {
-            request.setAttribute("exception", e);
+        } catch (BaseException e) {
+            request.setAttribute("exception", e.getErrorCode());
+        } catch (JwtException | IllegalArgumentException e) {
+            request.setAttribute("exception", UserErrorCode.INVALID_TOKEN);
         }
 
         filterChain.doFilter(request, response);
