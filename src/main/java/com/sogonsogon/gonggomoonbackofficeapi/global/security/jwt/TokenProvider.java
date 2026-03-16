@@ -58,6 +58,7 @@ public class TokenProvider {
                 .compact();
 
         String refreshToken = Jwts.builder()
+                .subject(authentication.getName())
                 .expiration(new Date(now + refreshTokenValidity))
                 .signWith(key, Jwts.SIG.HS256)
                 .compact();
@@ -106,4 +107,8 @@ public class TokenProvider {
         }
     }
 
+    public Long getUserIdFromToken(String token) {
+        Claims claims = parseClaims(token);
+        return Long.parseLong(claims.getSubject());
+    }
 }

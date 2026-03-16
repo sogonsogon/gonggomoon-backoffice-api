@@ -10,7 +10,4 @@ public interface LocalCredentialRepository extends JpaRepository<LocalCredential
 
     Optional<LocalCredential> findByUserId(Long userId);
 
-    boolean existsByUserId(Long userId);
-
-    void deleteByUserId(Long userId);
 }
