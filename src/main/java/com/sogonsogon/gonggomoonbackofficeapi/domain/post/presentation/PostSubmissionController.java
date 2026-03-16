@@ -41,12 +41,12 @@ public class PostSubmissionController {
         return ResponseEntity.ok(BaseResponse.success());
     }
 
-    @PutMapping("/{id}/rejcet")
-    public ResponseEntity<BaseResponse<Void>> rejectSubmission(@PathVariable Long id,
+    @PutMapping("/{submissionId}/reject")
+    public ResponseEntity<BaseResponse<Void>> rejectSubmission(@PathVariable Long submissionId,
                                                  @RequestBody @Valid RejectSummitRequest request,
                                                  @AuthenticationPrincipal UserDetails details) {
 
-        submissionService.rejectSubmission(id, request, Long.valueOf(details.getUsername()));
+        submissionService.rejectSubmission(submissionId, request, Long.valueOf(details.getUsername()));
 
         return ResponseEntity.ok(BaseResponse.success());
     }
