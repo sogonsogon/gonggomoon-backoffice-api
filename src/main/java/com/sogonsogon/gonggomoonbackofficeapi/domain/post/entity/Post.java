@@ -1,5 +1,6 @@
 package com.sogonsogon.gonggomoonbackofficeapi.domain.post.entity;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -11,6 +12,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.Getter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -58,7 +61,8 @@ public class Post {
     private String originalContent;
 
     @Column(name = "analyzed_content", columnDefinition = "TEXT")
-    private String analyzedContent;
+    @JdbcTypeCode(SqlTypes.JSON)
+    private JsonNode analyzedContent;
 
     @Column(name = "started_at", nullable = false)
     private Instant startedAt;
@@ -121,7 +125,7 @@ public class Post {
         this.publishedAt = Instant.now();
     }
 
-    public void updateAnalyzedResult(String analyzedContent) {
+    public void updateAnalyzedResult(JsonNode analyzedContent) {
         this.analyzedContent = analyzedContent;
         this.status = PostStatus.ANALYZED;
         this.analyzedAt = Instant.now();

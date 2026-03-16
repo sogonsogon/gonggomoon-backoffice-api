@@ -25,7 +25,7 @@ public class AiCallbackService {
         Post foundPost = postRepository.findById(postId)
             .orElseThrow(() -> new BaseException(PostErrorCode.POST_NOT_FOUND));
 
-        foundPost.updateAnalyzedResult(resultNode.toString());
+        foundPost.updateAnalyzedResult(resultNode);
         postRepository.save(foundPost);
     }
 }
