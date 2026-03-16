@@ -1,14 +1,15 @@
 package com.sogonsogon.gonggomoonbackofficeapi.global.security.jwt;
 
 import com.sogonsogon.gonggomoonbackofficeapi.domain.user.dto.response.TokenResponse;
+import com.sogonsogon.gonggomoonbackofficeapi.domain.user.error.UserErrorCode;
+import com.sogonsogon.gonggomoonbackofficeapi.global.error.BaseException;
 import com.sogonsogon.gonggomoonbackofficeapi.global.security.principal.CustomUserDetails;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import io.jsonwebtoken.security.SecurityException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -91,12 +92,13 @@ public class TokenProvider {
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
     }
 
-    public boolean validateToken(String token) {
+    public void validateToken(String token) {
 
         try {
             Jwts.parser().verifyWith(key).build().parseSignedClaims(token);
-            return true;
-        } catch (SecurityException | MalformedJwtException e) {throw new RuntimeException();}
+        } catch (ExpiredJwtException e) {throw new BaseException(UserErrorCode.TOKEN_EXPIRED);
+        } catch (JwtException | IllegalArgumentException e) {throw new BaseException(UserErrorCode.INVALID_TOKEN);
+        }
     }
 
     private Claims parseClaims(String accessToken) {
