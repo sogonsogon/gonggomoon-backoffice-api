@@ -131,4 +131,8 @@ public class Post {
         this.analyzedAt = Instant.now();
     }
 
+    public void updateStatus(PostStatus status) {
+        this.status = status;
+    }
+
 }
