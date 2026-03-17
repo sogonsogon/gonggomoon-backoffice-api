@@ -58,6 +58,7 @@ public interface PostJpaRepository extends JpaRepository<Post, Long>, PostReposi
                       c.id,
                       i.id,
                       pl.id,
+                      p.analyzedContent,
                       p.title,
                       c.name,
                       i.name,
