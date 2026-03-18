@@ -72,7 +72,7 @@ public interface PostJpaRepository extends JpaRepository<Post, Long>, PostReposi
                       p.expiredAt
                       )
                     FROM Post p
-                    JOIN Platform pl ON pl.id = p.platformId
+                    LEFT JOIN Platform pl ON pl.id = p.platformId
                     JOIN Company c ON c.id = p.companyId
                     JOIN Industry i ON i.id = c.industryId
                     WHERE p.id = :id
