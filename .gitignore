@@ -46,6 +46,7 @@ application.yml
 application-*.yml
 !**/src/test/**/application.yml
 !**/src/test/**/application-*.yml
+!application-dev.yml
 
 ### Environment variables ###
-.env
+*.env
