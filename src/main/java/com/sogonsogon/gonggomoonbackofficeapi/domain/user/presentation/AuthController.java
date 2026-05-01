@@ -7,8 +7,6 @@ import com.sogonsogon.gonggomoonbackofficeapi.domain.user.dto.response.TokenResp
 import com.sogonsogon.gonggomoonbackofficeapi.global.response.BaseResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,9 +31,8 @@ public class AuthController {
     }
 
     @PostMapping("/reissue")
-    public ResponseEntity<BaseResponse<TokenResponse>> refresh(@AuthenticationPrincipal UserDetails details,
-                                                               @RequestBody @Valid RefreshRequest request) {
+    public ResponseEntity<BaseResponse<TokenResponse>> refresh(@RequestBody @Valid RefreshRequest request) {
 
-        return ResponseEntity.ok(BaseResponse.success(authService.refresh(request, Long.valueOf(details.getUsername()))));
+        return ResponseEntity.ok(BaseResponse.success(authService.refresh(request)));
     }
 }

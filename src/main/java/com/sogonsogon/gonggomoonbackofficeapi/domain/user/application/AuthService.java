@@ -59,13 +59,11 @@ public class AuthService {
     }
 
     @Transactional
-    public TokenResponse refresh(RefreshRequest request, Long requestBy) {
+    public TokenResponse refresh(RefreshRequest request) {
         // 토큰 검증 로직
         tokenProvider.validateToken(request.refreshToken());
 
         Long userId = tokenProvider.getUserIdFromToken(request.refreshToken());
-
-        if (!userId.equals(requestBy)) throw new BaseException(UserErrorCode.UNAUTHORIZED_ACCESS);
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BaseException(UserErrorCode.USER_NOT_FOUND));
