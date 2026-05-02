@@ -73,7 +73,7 @@ public class AuthService {
         );
 
         Authentication authentication = new UsernamePasswordAuthenticationToken(
-                user.getEmail(), "", authorities
+                user.getId().toString(), "", authorities
         );
 
         // 유효한 세션이 아니거나 이미 로그아웃된 상태 -> 다시 로그인을 유도
