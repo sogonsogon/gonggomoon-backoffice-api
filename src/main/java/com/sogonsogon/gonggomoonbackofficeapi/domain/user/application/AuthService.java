@@ -69,7 +69,7 @@ public class AuthService {
                 .orElseThrow(() -> new BaseException(UserErrorCode.USER_NOT_FOUND));
 
         List<SimpleGrantedAuthority> authorities = Collections.singletonList(
-                new SimpleGrantedAuthority(user.getRole().name()) // Role이 Enum일 경우 .name()
+                new SimpleGrantedAuthority(user.getRole().getAuthority()) // Role이 Enum일 경우 .name()
         );
 
         Authentication authentication = new UsernamePasswordAuthenticationToken(
